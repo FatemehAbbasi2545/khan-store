@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LightLevel {
+  LOW
+  INDIRECT
+  DIRECT
+}
+
+enum CareDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  PREORDER
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PROCESSING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELED
+}
+
+enum Occasion {
+  BIRTHDAY
+  ANNIVERSARY
+  VALENTINE
+  MOTHERS_DAY
+  TEACHERS_DAY
+  CONDOLENCE
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  nameFa    String
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+model Product {
+  id                  String         @id @default(cuid())
+  slug                String         @unique
+  nameFa               String
+  nameScientific       String?
+  description          String
+  priceToman            Int
+  images                String[]
+  category              Category       @relation(fields: [categoryId], references: [id])
+  categoryId            String
+
+  // care info
+  light                 LightLevel?
+  waterPerWeek          Int?
+  tempMinC              Int?
+  tempMaxC              Int?
+  careDifficulty        CareDifficulty?
+  petSafe               Boolean        @default(false)
+  airPurifying          Boolean        @default(false)
+  suitableForOffice     Boolean        @default(false)
+
+  stockStatus           StockStatus    @default(IN_STOCK)
+
+  cartItems             CartItem[]
+  orderItems            OrderItem[]
+  reviews               Review[]
+
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  token     String     @unique
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int      @default(1)
+
+  // occasion / gift options
+  occasion     Occasion?
+  greetingCard String?
+  message      String?
+  isAnonymous  Boolean    @default(false)
+}
+
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String   @unique
+  passwordHash String
+  orders       Order[]
+  reviews      Review[]
+  createdAt    DateTime @default(now())
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  customerName   String
+  phone          String
+  address        String
+  city           String
+  deliveryDate   String
+  deliverySlot   String
+  totalToman     Int
+  status         OrderStatus @default(PENDING_PAYMENT)
+
+  customer       Customer?   @relation(fields: [customerId], references: [id])
+  customerId     String?
+
+  paymentAuthority String?
+  paymentRefId     String?
+
+  items          OrderItem[]
+  reviews        Review[]
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId       String
+  product       Product @relation(fields: [productId], references: [id])
+  productId     String
+  nameSnapshot  String
+  priceSnapshot Int
+  quantity      Int
+
+  // occasion / gift options (snapshot from cart at checkout time)
+  occasion     Occasion?
+  greetingCard String?
+  message      String?
+  isAnonymous  Boolean    @default(false)
+}
+
+model GreetingCard {
+  id        String   @id @default(cuid())
+  imageData String
+  label     String?
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, productId, orderId])
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+model ContactMessage {
+  id        String                @id @default(cuid())
+  name      String
+  phone     String
+  email     String
+  message   String
+  status    ContactMessageStatus  @default(NEW)
+  createdAt DateTime              @default(now())
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  excerpt     String
+  content     String
+  coverImage  String?
+  status      ArticleStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// Editable page texts managed from the admin panel (keys: "about", "story", "values").
+model SiteContent {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
