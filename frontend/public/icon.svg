@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 340" width="300" height="340">
+  <defs>
+    <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8C1C41"/>
+      <stop offset="100%" stop-color="#6B1030"/>
+    </linearGradient>
+  </defs>
+
+  <!-- left leaf -->
+  <path d="M152,320 C104,296 58,240 80,152 C90,188 116,204 132,164 C154,228 158,280 152,320 Z" fill="url(#rubyGrad)"/>
+
+  <!-- center petal -->
+  <path d="M152,320 Q128,210 150,100 Q179,206 152,320 Z" fill="#6B1030"/>
+
+  <!-- right sweeping flame, curling tip -->
+  <path d="M152,320 C226,294 282,216 262,112 C250,142 222,156 210,140 C240,108 248,66 226,28 C200,78 158,148 152,320 Z" fill="#A9762C"/>
+</svg>

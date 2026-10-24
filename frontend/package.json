@@ -1,0 +1,28 @@
+{
+  "name": "khan-store-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "test:security": "node --test test/checkout-privacy.test.cjs",
+    "test:smoke": "node test/production-smoke.cjs",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "postcss": "^8.4.35",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5.3.3"
+  },
+  "engines": { "node": ">=20.9.0" }
+}
