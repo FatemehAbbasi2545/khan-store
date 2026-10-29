@@ -4,6 +4,9 @@ node_modules/
 .env.local.example 
 .env.example
 description.md
+REVIEW-2026-10-22.md
+SECURITY-STATUS.md
+deploy/
 dist/
 .next/
 *.log
